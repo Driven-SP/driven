@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>{{ name }}</title>
+  </head>
+  <body>
+    <h1>{{ name }}</h1>
+    <form action={{ URI }} method=POST>
+        {% for id_name, id_type in attributes.items() %}
+        <label for={{ id_name }}>{{ id_name }}</label><br>
+        <input type={{ id_type }} id={{ id_name }} name={{ id_name }}><br>
+        {% endfor %}
+        <input type=submit value={{ submit_message }}/><br>
+    </form>
+  </body>
+</html>
