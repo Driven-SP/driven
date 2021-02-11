@@ -13,15 +13,23 @@ Make sure you have python3 installed on your macbook.
 
 Clone the repository and set it up. 
 ```
-$ git clone https://github.com/kaushik530411/Driven.git
-$ cd Driven
-$ pip3 install virtualenv
-$ virtualenv --python=$(which python3) env
-$ source activate.sh
-$ pip3 install -r requirements.txt
-$ python3 db.py
-$ flask run
+git clone https://github.com/kaushik530411/Driven.git
+cd Driven
+pip3 install virtualenv
+virtualenv --python=$(which python3) env
+source activate.sh
+pip3 install flask
+python3 db.py
+flask run
 ```
+
+## Testing Instructions
+This project uses pytest which is installed as part of the requirements. Use the following command to run all tests:
+```
+pytest -v
+```
+
+To run tests in specific modules or directories, go to the directory and then use the above command.
 
 ## Schema
 ```
