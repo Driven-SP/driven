@@ -18,7 +18,7 @@ $ cd Driven
 $ pip3 install virtualenv
 $ virtualenv --python=$(which python3) env
 $ source activate.sh
-$ pip3 install flask
+$ pip3 install -r requirements.txt
 $ python3 db.py
 $ flask run
 ```
