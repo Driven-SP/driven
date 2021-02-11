@@ -13,12 +13,12 @@ Make sure you have python3 installed on your macbook.
 
 Clone the repository and set it up. 
 ```
-git clone https://github.com/kaushik530411/Driven.git
+git clone https://github.com/Driven-SP/driven
 cd Driven
 pip3 install virtualenv
 virtualenv --python=$(which python3) env
 source activate.sh
-pip3 install flask
+pip3 install -r requirements.txt
 python3 db.py
 flask run
 ```
