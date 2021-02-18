@@ -1,108 +1,15 @@
-<html>
-  <head>
-    <title>Driven</title>
-    <h1>Welcome to Driven</h1>
-    <p>Universal address portal for all</p>
-  </head>
-  <body>
-    <h2>Add Operations</h2>
-    <ol>
-      <li><a href="/users/add">Add a User</a></li>
-      <li><a href="/address/add">Add an Address for a user</a></li>
-      <li><a href="/vendors/add">Add a Vendor</a></li>
-      <li><a href="/addressvendorsmap/add">Add a Vendor for an Address</a></li>
-      <li>
-        <form action="/users/address/change" method=GET>
-          <label>AddressId </label>
-          <input name="AddressId"/>
-          <label>NewAddress </label>
-          <input name="address"/>
-          <input type=submit value="Change a User's address."/>
-        </form>
-      </li>
-    </ol>
-    <h2>Remove Operations</h2>
-    <ol>
-      <li>
-        <form action="/users/remove" method=GET>
-          <label>UserId </label>
-          <input name="UserId"/>
-          <input type=submit value="Remove a User."/>
-        </form>
-      </li>
-      <li>
-        <form action="/address/remove" method=GET>
-          <label>AddressId</label>
-          <input name="AddressId"/>
-          <input type=submit value="Remove an Address for a user."/>
-        </form>
-      </li>
-      <li>
-        <form action="/vendors/remove" method=GET>
-          <label>VendorId </label>
-          <input name="VendorId"/>
-          <input type=submit value="Remove a Vendor"/>
-        </form>
-      <li>
-        <form action="/addressvendorsmap/remove" method=GET>
-          <label>VendorId</label>
-          <input name="VendorId"/>
-          <label>AddressId</label>
-          <input name="AddressId"/>
-          <input type=submit value="Remove a Vendor for an Address"/>
-        </form>
-      </li>
-      <li>
-        <form action="/addressvendorsmap/revoke_access" method=GET>
-          <label>VendorId</label>
-          <input name="VendorId"/>
-          <label>AddressId</label>
-          <input name="AddressId"/>
-          <input type=submit value="Revoke access for the Vendor."/>
-        </form>
-      </li>
-      <li>
-        <form action="/addressvendorsmap/grant_access" method=GET>
-          <label>VendorId</label>
-          <input name="VendorId"/>
-          <label>AddressId</label>
-          <input name="AddressId"/>
-          <input type=submit value="Grant access for the Vendor."/>
-        </form>
-      </li>
-    </ol>
-    <h2>Views</h2>
-    <ol>
-      <li><a href="/users">Users</a></li>
-      <li><a href="/address">Address</a></li>
-      <li><a href="/vendors">Vendors</a></li>
-      <li><a href="/addressvendorsmap">AddressVendorsMap</a></li>
-    </ol>
-    <h2>Filtered Search</h2>
-    <ol>
-      <li>
-        <form action="/users/addresses" method=GET>
-          <label>UserId</label>
-          <input name="UserId"/>
-          <input type=submit value="Addresses of the User."/>
-        </form>
-      </li>
-      <li>
-        <form action="/address/vendors" method=GET>
-          <label>AddressId</label>
-          <input name="AddressId"/>
-          <input type=submit value="Vendors for a given address."/>
-        </form>
-      </li>
-      <li>
-        <form action="/vendors/user_address" method=GET>
-          <label>VendorId</label>
-          <input name="VendorId"/>
-          <label>UserId</label>
-          <input name="UserId"/>
-          <input type=submit value="Address of the User for as seen by the Vendor"/>
-        </form>
-      </li>
-    </ol>
-  </body>
-</html>
+{%- extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+      <div class="jumbotron">
+  <h1 class="display-4">Driven</h1>
+  <p class="lead">Driven is one of a kind universal platform for your mailing needs</p>
+  <hr class="my-4">
+  <p>Join us, and track your packages</p>
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="#" role="button">Get Started</a>
+  </p>
+</div>
+</div>
+{%- endblock %}
