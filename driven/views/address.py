@@ -80,3 +80,7 @@ def views(bp):
             except Exception:
                 return render_template("form_error.html", errors=["Your request did not went through check your inputs again."])
         return render_template("table.html", name="Vendors for the Address : " + address_id, rows=rows)
+
+    @bp.route("/add_address")
+    def add_address():
+        return render_template("add_address.html")
