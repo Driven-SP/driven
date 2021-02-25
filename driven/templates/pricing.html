@@ -2,4 +2,25 @@
 
 {% block content %}
 
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Individual Users</h5>
+        <p class="card-text"> $2 a month to take back control of your mails and packages. </p>
+		<button type="button" class="btn btn-success" onclick="window.location.href='/signup';">Get Started!</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Vendors</h5>
+        <p class="card-text">Contact our sales representative for pricing. </p>
+		<button type="button" class="btn btn-success" onclick="window.location.href='/contact';">Contact Us!</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {%- endblock %}
