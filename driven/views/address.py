@@ -47,18 +47,19 @@ def views(bp):
         attributes = {"UserId" : "number", "Address": "text", "StartDate" : "text", "EndDate" : "text" }
         return render_template("form.html", name="Add Address: ", URI="/address/add/submit",  submit_message="Add Address", attributes=attributes)
 
-    @bp.route("/address/add/submit", methods = ['POST', 'GET'])
-    def addAddress():
-        with get_db() as conn:
-            user_id = request.form.get("UserId")
-            address = request.form.get("Address")
-            start_date = request.form.get("StartDate")
-            end_date = request.form.get("EndDate")
-            try:
-                insertAddressInDB(conn, user_id, address, start_date, end_date)
-            except Exception:
-                return render_template("form_error.html", errors=["Your insertions did not went through check your inputs again."])
-        return viewAddress()
+    #  todo: name clash with another addAddress method, so commenting it
+    #  @bp.route("/address/add/submit", methods = ['POST', 'GET'])
+    #  def addAddress():
+        #  with get_db() as conn:
+            #  user_id = request.form.get("UserId")
+            #  address = request.form.get("Address")
+            #  start_date = request.form.get("StartDate")
+            #  end_date = request.form.get("EndDate")
+            #  try:
+                #  insertAddressInDB(conn, user_id, address, start_date, end_date)
+            #  except Exception:
+                #  return render_template("form_error.html", errors=["Your insertions did not went through check your inputs again."])
+        #  return viewAddress()
 
     @bp.route("/address/remove")
     def removeAddress():
@@ -82,5 +83,5 @@ def views(bp):
         return render_template("table.html", name="Vendors for the Address : " + address_id, rows=rows)
 
     @bp.route("/add_address")
-    def add_address():
+    def addAddress():
         return render_template("add_address.html")
