@@ -5,8 +5,8 @@ from flask import escape
 from driven.db import get_db, execute
 
 #  HelperFunctions
-def viewAddressHelper(conn):
-    return execute(conn, "SELECT address_id, user_id, address, start_date, end_date FROM Address")
+def viewAddressHelper(conn, user_id):
+    return execute(conn, "SELECT address_id, :user_id, address, start_date, end_date FROM Address", {'user_id': user_id} )
 
 def insertAddressInDB(conn, user_id, address, start_date, end_date):
     print(user_id, address, start_date, end_date)
@@ -39,8 +39,10 @@ def views(bp):
     @bp.route("/address")
     def viewAddress():
         with get_db() as conn:
-            rows = viewAddressHelper(conn)
-        return render_template("table.html", name="Address", rows=rows)
+            #  todo: userid is hardcoded for 1 right now, need to change later, this is just for demo
+            user_id = 1
+            rows = viewAddressHelper(conn, user_id)
+        return render_template("user-address.html", name="Address", rows=rows)
 
     @bp.route("/address/add", methods = ['POST', 'GET'])
     def renderAddAddressForm():

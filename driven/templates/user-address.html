@@ -1,18 +1,5 @@
 {%- extends "base.html" %}
-
 {% block content %}
-
-<p class="h2"> Kaushik Mishra </p>
-<br>
-
-<p class="h4"> Actions: </p>
-<button type="button" class="btn btn-success" onclick="window.location.href='/address/add';">Add new address</button>
-<br>
-
-<p class="h4"> Current address: </p>
-<p> <mark> 8772 West Washington Ave, San Duperino, MT, 20221 </mark> </p>
-<br>
-
 <table class="table table-striped">
   <thead>
       {% if rows %}
@@ -33,6 +20,4 @@
       {% endfor %}
   </tbody>
 </table>
-
-
 {%- endblock %}
