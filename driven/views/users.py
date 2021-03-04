@@ -87,7 +87,7 @@ def views(bp):
                 rows = getAllAddressesForUserHelper(conn, user_id)
             except Exception:
                 return render_template("form_error.html", errors=["Your request did not went through check your inputs again."])
-        return render_template("table.html", name="Addresses for the User : " + user_id, rows=rows)
+        return render_template("user-address.html", name="Addresses for the User : " + user_id, rows=rows)
 
     @bp.route("/users/address/change")
     def changeAddressForAUser():

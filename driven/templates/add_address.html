@@ -1,37 +1,41 @@
 {%- extends "base.html" %}
 
 {% block content %}
+
+<form method="post">
+
 <label> Enter your address </label>
-<div class="input-group input-group-sm mb-3">
-    <span class="input-group-text" id="inputGroup-sizing-sm">Street</span>
-    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-  </div>
+<div class="input-group mb-3">
+  <span class="input-group-text" id="inputGroup-sizing-default">Street</span>
+  <input name="Street" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
 </div>
-<div class="input-group input-group-sm mb-3">
-    <span class="input-group-text" id="inputGroup-sizing-sm">City</span>
-    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+<div class="input-group mb-3">
+  <span class="input-group-text" id="inputGroup-sizing-default">City</span>
+  <input name="City" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
 </div>
-<div class="input-group input-group-sm mb-3">
-    <span class="input-group-text" id="inputGroup-sizing-sm">State</span>
-    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+<div class="input-group mb-3">
+  <span class="input-group-text" id="inputGroup-sizing-default">State</span>
+  <input name="State" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
 </div>
-<div class="input-group input-group-sm mb-3">
-    <span class="input-group-text" id="inputGroup-sizing-sm">Zip</span>
-    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-  </div>
+<div class="input-group mb-3">
+  <span class="input-group-text" id="inputGroup-sizing-default">Zip</span>
+  <input name="Zip" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
 </div>
-</div>
-
-<div class="form-check">
-    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-    <label class="form-check-label" for="flexCheckDefault">
-      Set this as your primary address
-    </label>
-  </div>
-<div class="col-12">
-  <button class="btn btn-primary" type="submit">Submit form</button>
+<div class="input-group mb-3">
+  <span class="input-group-text" id="inputGroup-sizing-default">Date</span>
+  <input name="Date" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
 </div>
 
+<div class="mb-3 form-check">
+    <input name="SetPrimary" type="checkbox" class="form-check-input" >
+    <label class="form-check-label" for="exampleCheck1">Set this as your primary address</label>
+  </div>
+
+  <!-- todo: this endpoint will not work currently  -->
+	<button type="submit" class="btn btn-success" >Submit</button>
+</label>
+
+</form>
 {%- endblock %}
 
 
