@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Vendors;
 DROP TABLE IF EXISTS Address;
 DROP TABLE IF EXISTS AddressVendorsMap;
+DROP TABLE IF EXISTS UserValidation;
 
 CREATE TABLE IF NOT EXISTS Users (
   user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,4 +34,10 @@ CREATE TABLE IF NOT EXISTS AddressVendorsMap (
   PRIMARY KEY(vendor_id, address_id),
   FOREIGN KEY(vendor_id) REFERENCES Vendors(vendor_id) ON DELETE CASCADE,
   FOREIGN KEY(address_id) REFERENCES Address(address_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS UserValidation (
+  username TEXT PRIMARY KEY NOT NULL,
+  email_address TEXT NOT NULL,
+  password TEXT NOT NULL
 );

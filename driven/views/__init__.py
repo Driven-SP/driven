@@ -7,6 +7,7 @@ from driven.views import profile
 from driven.views import pricing
 from driven.views import contact
 from driven.views import account
+from driven.views import login
 from driven.views import addressvendorsmap
 
 blueprint = Blueprint('views', __name__)
@@ -18,6 +19,7 @@ profile.views(blueprint)
 pricing.views(blueprint)
 contact.views(blueprint)
 account.views(blueprint)
+login.views(blueprint)
 addressvendorsmap.views(blueprint)
 
 def init_app(app):
