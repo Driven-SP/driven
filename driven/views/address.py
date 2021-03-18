@@ -1,13 +1,10 @@
-from collections import namedtuple
-from datetime import date
-from flask import render_template
 from flask import request
 from flask import escape
 from driven.db import get_db, execute
 
 #  HelperFunctions
 def viewAddressHelper(conn, user_id):
-    return execute(conn, "SELECT address_id, :user_id, address, start_date, end_date FROM Address", {'user_id': user_id} )
+    return execute(conn, "SELECT address_id, address, start_date, end_date FROM Address WHERE Address.user_id = :user_id", {'user_id': user_id} )
 
 def insertAddressInDB(conn, user_id, address, start_date, end_date):
     print(user_id, address, start_date, end_date)

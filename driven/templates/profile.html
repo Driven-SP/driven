@@ -2,12 +2,14 @@
 
 {% block content %}
 
-<p class="h2"> Kaushik Mishra </p>
+<!-- todo : this is hardcoded like a lot of things, so change this when there is unique id for each -->
+<!-- user -->
+<p class="h2"> Prabin Sapkota </p>
 <br>
 
 <p class="h4"> Actions: </p>
 <button type="button" class="btn btn-success" onclick="window.location.href='/add_address';">Add new address</button>
-<br>
+<br><br>
 
 <p class="h4"> Current address: </p>
 <p> <mark> 8772 West Washington Ave, San Duperino, MT, 20221 </mark> </p>
@@ -18,7 +20,7 @@
       {% if rows %}
       <tr>
         {% for name in rows[0].keys() %}
-          <th>{{ name }}</th>
+				<th>{{ name }}</th>
         {% endfor %}
       </tr>
       {% endif %}
