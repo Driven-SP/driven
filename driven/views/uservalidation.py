@@ -1,9 +1,9 @@
-#  from collections import namedtuple
-#  from datetime import date
-#  from flask import render_template
-#  from flask import request
-#  from flask import escape
+#  todo : here, use flask-login for session management after the initial version works 
+
 from driven.db import get_db, execute
+
+#  todo: sync this with our local database later to store all the usenames that are currently active
+ALL_LOGGED_IN_USERS = set()
 
 #  give a connection to datebasae and other credential info this will register a new user
 #  todo: it is important to note that it will not do any sort validation as of now
@@ -23,13 +23,18 @@ def validateUser(conn, username, password):
 
     return False
 
-#  todo: implement this after session logic
+#  todo: implement this cleanly after good session logic
 def loginUser(username, password):
     with get_db() as conn:
         if validateUser(conn, username, password):
             # this is a very bad way to maintain the logged in username
-            pass
+            ALL_LOGGED_IN_USERS.add(username)
+            return True
 
-#  todo: implement this after session logic
-def logoutUser():
-    pass
+    return False
+
+#  todo: implement this cleanly after good session logic
+def logoutUser(username):
+    #  todo: note that this does not ensure user will be removed from the list if they exit without
+    #  clicking the logout button
+    ALL_LOGGED_IN_USERS.remove(username)
