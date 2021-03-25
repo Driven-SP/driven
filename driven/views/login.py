@@ -6,8 +6,13 @@ from driven.firestore_api import validateCredUser, signUpUser
 def views(bp):
     @bp.route("/login", methods = ['POST', 'GET'])
     def viewLogin():
+        # do not make session permanent
+        #  even with this, session persists until browser is completely shut down
+        session.permanent = False
+
         # give the login form to user
         if request.method == 'GET':
+            # todo:  do not give login form if user already logged in
             return render_template("login.html")
 
         #  try to submit and validate the login information
@@ -24,8 +29,7 @@ def views(bp):
 
     @bp.route("/logout", methods = ['GET'])
     def viewLogout():
-        username = session["username"]
-        session.pop(username, None)
+        session.pop("username", None)
         return redirect("/login")
 
     @bp.route("/signup", methods = ['GET', 'POST'])
