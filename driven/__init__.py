@@ -1,7 +1,5 @@
 import os
-
 from flask import Flask
-
 from driven import db, views
 
 def create_app(test_config=None):
