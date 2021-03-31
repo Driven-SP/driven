@@ -1,6 +1,7 @@
 from flask import render_template, redirect
 from flask import request, session
-from driven.firestore_api import validateCredUser, signUpUser
+from driven.firestore_api import validateCredUser, signUpUser, getDocumentIdOfUser
+from driven.firestore_api import getIdAddressMap, getPrimaryAddress, getDocumentIdOfUser
 
 #  RenderFunctions
 def views(bp):
@@ -19,10 +20,17 @@ def views(bp):
         elif request.method == 'POST':
             username = request.form.get("username")
             password = request.form.get("password")
+            user_document_id = getDocumentIdOfUser(username)
 
-            if validateCredUser(username, password) is True:
+            if validateCredUser(user_document_id, password) is True:
                 session["username"] = username
-                return render_template("profile.html", name=session["username"])
+                session["user_document_id"] = user_document_id
+
+                user_primary_address = getPrimaryAddress(user_document_id)
+                user_active_id_and_addresses = getIdAddressMap(user_document_id, "ACTIVE")
+                user_inactive_id_and_addresses = getIdAddressMap(user_document_id, "INACTIVE")
+
+                return render_template("profile.html", name=username, primary_address=user_primary_address, active_id_and_addresses=user_active_id_and_addresses, inactive_id_and_addresses=user_inactive_id_and_addresses)
 
         return render_template("login.html")
 

@@ -1,9 +1,8 @@
 from collections import namedtuple
 from datetime import date
-from flask import render_template
-from flask import request
-from flask import escape
+from flask import render_template, request, escape, session, redirect
 from driven.db import get_db, execute
+from driven.firestore_api import addAddressUser
 
 #  HelperFunctions
 def viewAddressHelper(conn, user_id):
@@ -77,36 +76,28 @@ def views(bp):
     #  post request handles submission of that form
     @bp.route("/add_address", methods= ['POST', 'GET'])
     def addAddress():
-        #  give the form to user
+        user_document_id = ""
+        try:
+            user_document_id = session["user_document_id"]
+        except:
+            return redirect("/login")
+
         if request.method == 'GET':
             return render_template("add_address.html")
 
-        #  try to submit the address to db
         elif request.method == 'POST':
-            with get_db() as conn:
-                #  todo: get current user's id for user_id field
-                #  currently hardcoded to Kaushik whose user_id is 1
-                user_id = 1
+            #  todo: also add some sort of form validation so that user given input is in correct
+            #  format, right now it accepts any string
+            street = request.form.get("Street").strip()
+            city = request.form.get("City").strip()
+            state = request.form.get("State").strip()
+            zip_id = request.form.get("Zip").strip()
+            full_address = '{}, {}, {} {}'.format(street, city, state, zip_id)
 
-                #  todo: also add some sort of form validation so that user given input is in correct
-                #  format, right now it accepts any string
-                street = request.form.get("Street").strip()
-                city = request.form.get("City").strip()
-                state = request.form.get("State").strip()
-                zip_id = request.form.get("Zip").strip()
-
-                address = '{}, {}, {} {}'.format(street, city, state, zip_id)  
-
-                #  current date is the start date
-                start_date = date.today()
-
-                #  todo: use specific date format and use this for validation in the input form
-                end_date = request.form.get("Date").strip()
-
-                try:
-                    insertAddressInDB(conn, user_id, address, start_date, end_date)
-                except Exception:
-                    return render_template("form_error.html", errors=["Your insertions did not went through check your inputs again."])
+            try:
+                addAddressUser(user_document_id, full_address)
+            except Exception:
+                return render_template("form_error.html", errors=["Failed to add new address"])
 
             #  if successful insertion, show the user's current address
-            return viewAddress()
+            return redirect("/profile")
