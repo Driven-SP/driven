@@ -42,11 +42,10 @@ def views(bp):
             lname = request.form.get("lname")
             email = request.form.get("email")
             phone = request.form.get("phone")
-            primary_address = request.form.get("primary_address")
             password = request.form.get("password")
             reenter_password = request.form.get("reenter_password")
 
-            if (password == reenter_password) and (signUpUser(fname, lname, email, phone, username, password, primary_address) is True):
+            if (password == reenter_password) and (signUpUser(fname, lname, email, phone, username, password) is True):
                 #  todo: give feedback regarding why the signup process was not successful
                 return render_template("login.html")
         return render_template("signup.html")
