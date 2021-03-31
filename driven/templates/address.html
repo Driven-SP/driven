@@ -1,0 +1,39 @@
+{%- extends "base.html" %}
+
+{% block content %}
+
+<p class="h2"> Hi {{ name }}! </p>
+<br>
+
+<p class="h4"> Actions: </p>
+<button type="button" class="btn btn-success" onclick="window.location.href='/add_address';">Add new address</button>
+<br><br>
+
+<p class="h4"> Primary Address: </p>
+<p> <mark> {{ primary_address }} </mark> </p>
+<br>
+
+<p class="h4"> Currently Active Addresses: </p>
+<ul>
+	{% for id, address in active_id_and_addresses.items() %}
+	<li> {{ address }} 
+	<button type="button" class="btn btn-outline-danger btn-sm">Delete</button>
+		<input name="address_id" id="to" value="{{ id }}">
+		<input type="submit" name="{{ id }}" class="btn btn-outline-danger btn-sm" value="Delete" onclick="window.location.href='/address/remove';">
+	</li>
+	<br>
+	{% endfor %}
+</ul>
+
+<p class="h4"> Previous/Inactive Addresses: </p>
+<ul>
+	{% for id, address in inactive_id_and_addresses.items() %}
+	<li> {{ address }} 
+	<input type="submit" name="{{ id }}" class="btn btn-outline-success btn-sm" value="Revive" onclick="window.location.href='/address/revive';">
+	</li>
+	<br>
+	{% endfor %}
+</ul>
+
+{%- endblock %}
+
