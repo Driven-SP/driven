@@ -78,5 +78,5 @@ def views(bp):
                 return render_template("form_error.html", errors=["Failed to add new address"])
 
             #  if successful insertion, show the user's current address
-            return redirect("/profile")
+            return redirect("/address")
 

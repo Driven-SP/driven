@@ -1,0 +1,42 @@
+{%- extends "base.html" %}
+
+{% block content %}
+
+<div class="mb-3">
+	<p class="lead">
+	Current {{ field }} is:
+	<p class="h2"> {{ value }} </p>
+	</p>
+	<br>
+
+	<form method="post">
+	<p class="lead">
+	Enter new <b>{{ field }}</b>
+	</p>
+	<br>
+
+	{% if field == "username" %}
+		<input name="username" type="text" class="form-control" id="exampleFormControlInput1" placeholder="{{ placeholder }}">
+		<br>
+		<button type="submit" formaction="/changeUsername" class="btn btn-success">Submit</button>
+	{% elif field == "fname" %}
+		<input name="fname" type="text" class="form-control" id="exampleFormControlInput1" placeholder="{{ placeholder }}">
+		<br>
+		<button type="submit" formaction="/changeFirstName" class="btn btn-success">Submit</button>
+	{% elif field == "lname" %}
+		<input name="lname" type="text" class="form-control" id="exampleFormControlInput1" placeholder="{{ placeholder }}">
+		<br>
+		<button type="submit" formaction="/changeLastName" class="btn btn-success">Submit</button>
+	{% elif field == "phone" %}
+		<input name="phone" type="text" class="form-control" id="exampleFormControlInput1" placeholder="{{ placeholder }}">
+		<br>
+		<button type="submit" formaction="/changePhoneNumber" class="btn btn-success">Submit</button>
+	{% elif field == "email" %}
+		<input name="email" type="text" class="form-control" id="exampleFormControlInput1" placeholder="{{ placeholder }}">
+		<br>
+		<button type="submit" formaction="/changeEmailAddress" class="btn btn-success">Submit</button>
+	{% endif %}
+	</form>
+</div>
+
+{%- endblock %}

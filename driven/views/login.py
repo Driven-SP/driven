@@ -17,6 +17,7 @@ def views(bp):
             return render_template("login.html")
 
         #  try to submit and validate the login information
+        #  todo : render dashboard/home here
         elif request.method == 'POST':
             username = request.form.get("username")
             password = request.form.get("password")
@@ -30,7 +31,7 @@ def views(bp):
                 user_active_id_and_addresses = getIdAddressMap(user_document_id, "ACTIVE")
                 user_inactive_id_and_addresses = getIdAddressMap(user_document_id, "INACTIVE")
 
-                return render_template("profile.html", name=username, primary_address=user_primary_address, active_id_and_addresses=user_active_id_and_addresses, inactive_id_and_addresses=user_inactive_id_and_addresses)
+                return render_template("address.html", name=username, primary_address=user_primary_address, active_id_and_addresses=user_active_id_and_addresses, inactive_id_and_addresses=user_inactive_id_and_addresses)
 
         return render_template("login.html")
 

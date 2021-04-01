@@ -114,6 +114,17 @@ def changePasswordUser(user_document_id, new_password):
         u'password-hash': new_password
     }, merge=True)
 
+def getUserProfileInfo(user_document_id):
+    user_info = getUserInfo(user_document_id)
+    profile_info = {}
+    profile_info["fname"] = user_info["fname"]
+    profile_info["lname"] = user_info["lname"]
+    profile_info["username"] = user_info["username"]
+    profile_info["email"] = user_info["email"]
+    profile_info["phone"] = user_info["phone"]
+    profile_info["primary_address"] = getPrimaryAddress(user_document_id)
+    return profile_info
+
 
 #  Address API
 
@@ -342,3 +353,5 @@ def getIdAddressMap(user_document_id, address_type):
 
 #  changeUsernameUser("iiGbVTaYWHsv4p26OPam", "seth")
 #  changeEmailUser("iiGbVTaYWHsv4p26OPam", "kmishra@gmail.com")
+
+#  print(getUserProfileInfo("o4UYfQj2hVy8s40bDRB9"))
