@@ -2,4 +2,39 @@
 
 {% block content %}
 
+<form method="post">
+
+<div class="form-floating mb-3">
+  <input name="username" class="form-control" id="floatingInput" placeholder="alice">
+  <label for="floatingInput">Username</label>
+</div>
+<div class="form-floating mb-3">
+  <input name="fname" class="form-control" id="floatingInput" placeholder="alice">
+  <label for="floatingInput">First name</label>
+</div>
+<div class="form-floating mb-3">
+  <input name="lname" class="form-control" id="floatingInput" placeholder="alice">
+  <label for="floatingInput">Last name</label>
+</div>
+<div class="form-floating mb-3">
+  <input name="email" class="form-control" id="floatingInput" placeholder="alice">
+  <label for="floatingInput">Email</label>
+</div>
+<div class="form-floating mb-3">
+  <input name="phone" class="form-control" id="floatingInput" placeholder="alice">
+  <label for="floatingInput">Phone</label>
+</div>
+<div class="form-floating mb-3">
+  <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="password">
+  <label for="floatingPassword">Password</label>
+</div>
+<div class="form-floating mb-3">
+  <input name="reenter_password" type="password" class="form-control" id="floatingPassword" placeholder="password">
+  <label for="floatingPassword">Reenter pasword</label>
+</div>
+
+<button type="submit" class="btn btn-success" >Signup</button>
+
+</form>
+
 {%- endblock %}

@@ -2,37 +2,69 @@
 
 {% block content %}
 
-<p class="h2"> Kaushik Mishra </p>
+<h1 class="display-4"> {{ fname }} {{ lname }} </h1>
+
+<form method="post">
+	<input type="hidden" name="field" value="fname">
+	<input type="hidden" name="value" value="{{ fname }}">
+	<input type="hidden" name="placeholder" value="alice">
+	<button type="submit" formaction="/changeProfileInfo" class="btn btn-link btn-sm">Change First Name</button>
+</form>
+
+<form method="post">
+	<input type="hidden" name="field" value="lname">
+	<input type="hidden" name="value" value="{{ lname }}">
+	<input type="hidden" name="placeholder" value="shelby">
+	<button type="submit" formaction="/changeProfileInfo" class="btn btn-link btn-sm">Change Last Name</button>
+</form>
+
+<div class="card">
+  <div class="card-body">
+	<form method="post">
+		<p class="lead">
+			<input type="hidden" name="field" value="username">
+			<input type="hidden" name="value" value="{{ username }}">
+			<input type="hidden" name="placeholder" value="alice">
+			Username: {{ username }}
+			<button type="submit" formaction="/changeProfileInfo" class="btn btn-link btn-sm">change</button>
+		</p>
+	</form>
+  </div>
+
+  <div class="card-body">
+	<form method="post">
+		<p class="lead">
+			<input type="hidden" name="field" value="phone">
+			<input type="hidden" name="value" value="{{ phone }}">
+			<input type="hidden" name="placeholder" value="123456789">
+			Phone number: {{ phone }}
+			<button type="submit" formaction="/changeProfileInfo" class="btn btn-link btn-sm">change</button>
+		</p>
+	</form>
+  </div>
+
+  <div class="card-body">
+	<form method="post">
+		<p class="lead">
+			<input type="hidden" name="field" value="email">
+			<input type="hidden" name="value" value="{{ email }}">
+			<input type="hidden" name="placeholder" value="alice@gmail.com">
+			Email: {{ email }}
+			<button type="submit" formaction="/changeProfileInfo" class="btn btn-link btn-sm">change</button>
+		</p>
+	</form>
+  </div>
+
+  <div class="card-body">
+	<p class="lead">
+	Primary address: {{ primary_address }}
+	<button type="button" class="btn btn-link btn-sm" onclick="window.location.href='/address';">view all addresses</button>
+	</p>
+  </div>
+</div>
+
 <br>
 
-<p class="h4"> Actions: </p>
-<button type="button" class="btn btn-success" onclick="window.location.href='/add_address';">Add new address</button>
-<br>
-
-<p class="h4"> Current address: </p>
-<p> <mark> 8772 West Washington Ave, San Duperino, MT, 20221 </mark> </p>
-<br>
-
-<table class="table table-striped">
-  <thead>
-      {% if rows %}
-      <tr>
-        {% for name in rows[0].keys() %}
-          <th>{{ name }}</th>
-        {% endfor %}
-      </tr>
-      {% endif %}
-  </thead>
-  <tbody>
-      {% for row in rows %}
-      <tr>
-        {% for col in row.values() %}
-          <td>{{ col }}</td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-  </tbody>
-</table>
-
+<button type="button" class="btn btn-secondary">Change Password</button>
 
 {%- endblock %}

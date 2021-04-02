@@ -1,112 +1,90 @@
-from collections import namedtuple
-from datetime import date
-from flask import render_template
-from flask import request
-from flask import escape
-from driven.db import get_db, execute
+from flask import render_template, request, session, redirect
+from driven.firestore_api import getIdAddressMap, getPrimaryAddress, addAddressUser, deleteAddressUser, reviveAddressUser, changePrimaryAddressUser
 
-#  HelperFunctions
-def viewAddressHelper(conn, user_id):
-    return execute(conn, "SELECT address_id, :user_id, address, start_date, end_date FROM Address", {'user_id': user_id} )
 
-def insertAddressInDB(conn, user_id, address, start_date, end_date):
-    print(user_id, address, start_date, end_date)
-    invalid = ("", None)
-    if not user_id or address in invalid or user_id in invalid:
-        raise Exception
-    return execute(
-    conn,
-    "INSERT INTO Address (user_id, address, start_date, end_date) VALUES (:user_id, :address, :start_date, :end_date);", {'user_id': user_id, 'address': address, 'start_date': start_date, 'end_date': end_date}
-    )
-
-def deleteAddressFromDB(conn, address_id):
-    if address_id in ("", None):
-        raise Exception
-    return execute(
-    conn,
-    "DELETE FROM Address WHERE address_id = :address_id;", {'address_id': address_id}
-    )
-
-def getAllVendprsForAddressHelper(conn, address_id):
-    if address_id in ("", None):
-        raise Exception
-    return execute(
-    conn,
-    "SELECT AddressVendorsMap.address_id, Address.address, AddressVendorsMap.vendor_id, Vendors.vendor_name , AddressVendorsMap.vendor_access FROM ((AddressVendorsMap INNER JOIN Vendors ON AddressVendorsMap.vendor_id = Vendors.vendor_id) INNER JOIN Address ON AddressVendorsMap.address_id = Address.address_id) WHERE AddressVendorsMap.address_id = :address_id;", {'address_id': address_id}
-    )
-    
-#  RenderFunctions
 def views(bp):
-    @bp.route("/address")
+    @bp.route("/address", methods=['GET', 'POST'])
     def viewAddress():
-        with get_db() as conn:
-            #  todo: userid is hardcoded for 1 right now, need to change later, this is just for demo
-            user_id = 1
-            rows = viewAddressHelper(conn, user_id)
-        return render_template("user-address.html", name="Address", rows=rows)
+        try:
+            curr_username = session["username"]
+            curr_user_doc_id = session["user_document_id"]
+            user_primary_address = getPrimaryAddress(curr_user_doc_id)
+            user_active_id_and_addresses = getIdAddressMap(
+                curr_user_doc_id, "ACTIVE")
+            user_inactive_id_and_addresses = getIdAddressMap(
+                curr_user_doc_id, "INACTIVE")
 
-    @bp.route("/address/add", methods = ['POST', 'GET'])
-    def renderAddAddressForm():
-        #  todo: for startdate we can use the current date, for userid we need to get the current user from login context
-        
-        attributes = {"UserId" : "number", "Address": "text", "StartDate" : "text", "EndDate" : "text" }
-        return render_template("form.html", name="Add Address: ", URI="/address/add/submit",  submit_message="Add Address", attributes=attributes)
+            return render_template(
+                "address.html",
+                name=curr_username,
+                primary_address=user_primary_address,
+                active_id_and_addresses=user_active_id_and_addresses,
+                inactive_id_and_addresses=user_inactive_id_and_addresses)
 
-    @bp.route("/address/remove")
+        except:
+            return redirect("/login")
+
+    @bp.route("/removeAddress", methods=['POST'])
     def removeAddress():
-        with get_db() as conn:
-            address_id = request.args.get("AddressId")
-            print("Address ID", address_id)
-            try:
-                deleteAddressFromDB(conn, address_id)
-            except Exception:
-                return render_template("form_error.html", errors=["Your deletion did not went through check your inputs again."])
-        return viewAddress()
+        try:
+            user_document_id = session["user_document_id"]
+            address_id = request.form.get("address_id")
+            deleteAddressUser(user_document_id, address_id)
+            return redirect("/address")
+        except:
+            #  todo: maybe redirect to login page cause it is possible that the user is not logged in
+            return redirect("/address")
 
-    @bp.route("/address/vendors")
-    def getAllVendprsForAddress():
-        with get_db() as conn:
-            address_id = request.args.get("AddressId")
-            try:
-                rows = getAllVendprsForAddressHelper(conn, address_id)
-            except Exception:
-                return render_template("form_error.html", errors=["Your request did not went through check your inputs again."])
-        return render_template("table.html", name="Vendors for the Address : " + address_id, rows=rows)
+    @bp.route("/reviveAddress", methods=['POST'])
+    def reviveAddress():
+        try:
+            user_document_id = session["user_document_id"]
+            address_id = request.form.get("revive_address_id")
+            reviveAddressUser(user_document_id, address_id)
+            return redirect("/address")
+        except:
+            #  todo: maybe redirect to login page cause it is possible that the user is not logged in
+            return redirect("/address")
 
-    #  get request handles form for new address input by user
-    #  post request handles submission of that form
-    @bp.route("/add_address", methods= ['POST', 'GET'])
+    @bp.route("/changePrimaryAddress", methods=['POST'])
+    def changePrimaryAddress():
+        try:
+            user_document_id = session["user_document_id"]
+            address_id = request.form.get("address_id")
+            changePrimaryAddressUser(user_document_id, address_id)
+            return redirect("/address")
+        except:
+            #  todo: maybe redirect to login page cause it is possible that the user is not logged in
+            return redirect("/address")
+
+        pass
+
+    @bp.route("/add_address", methods=['POST', 'GET'])
     def addAddress():
-        #  give the form to user
+        user_document_id = ""
+        #  validate user is logged in
+        try:
+            user_document_id = session["user_document_id"]
+        except:
+            return redirect("/login")
+
         if request.method == 'GET':
             return render_template("add_address.html")
 
-        #  try to submit the address to db
         elif request.method == 'POST':
-            with get_db() as conn:
-                #  todo: get current user's id for user_id field
-                #  currently hardcoded to Kaushik whose user_id is 1
-                user_id = 1
+            #  todo: also add some sort of form validation so that user given input is in correct
+            #  format, right now it accepts any string
+            street = request.form.get("Street").strip()
+            city = request.form.get("City").strip()
+            state = request.form.get("State").strip()
+            zip_id = request.form.get("Zip").strip()
+            full_address = '{}, {}, {} {}'.format(street, city, state, zip_id)
 
-                #  todo: also add some sort of form validation so that user given input is in correct
-                #  format, right now it accepts any string
-                street = request.form.get("Street").strip()
-                city = request.form.get("City").strip()
-                state = request.form.get("State").strip()
-                zip_id = request.form.get("Zip").strip()
-
-                address = '{}, {}, {} {}'.format(street, city, state, zip_id)  
-
-                #  current date is the start date
-                start_date = date.today()
-
-                #  todo: use specific date format and use this for validation in the input form
-                end_date = request.form.get("Date").strip()
-
-                try:
-                    insertAddressInDB(conn, user_id, address, start_date, end_date)
-                except Exception:
-                    return render_template("form_error.html", errors=["Your insertions did not went through check your inputs again."])
+            try:
+                addAddressUser(user_document_id, full_address)
+            except Exception:
+                return render_template("form_error.html",
+                                       errors=["Failed to add new address"])
 
             #  if successful insertion, show the user's current address
-            return viewAddress()
+            return redirect("/address")
