@@ -1,5 +1,6 @@
 from flask import render_template, session, redirect, request
-from  driven.firestore_api import getUserProfileInfo, changeUsernameUser, changeFnameUser, changeLnameUser, changeEmailUser, changePhoneUser
+from driven.firestore_api import getUserProfileInfo, changeUsernameUser, changeFnameUser, changeLnameUser, changeEmailUser, changePhoneUser
+
 
 #  RenderFunctions
 def views(bp):
@@ -17,12 +18,18 @@ def views(bp):
             phone = user_profile_info["phone"]
             primary_address = user_profile_info["primary_address"]
 
-            return render_template("profile.html", fname=fname, lname=lname, username=username, email=email, phone=phone, primary_address=primary_address)
+            return render_template("profile.html",
+                                   fname=fname,
+                                   lname=lname,
+                                   username=username,
+                                   email=email,
+                                   phone=phone,
+                                   primary_address=primary_address)
 
         except:
             return redirect("/login")
 
-    @bp.route("/changeProfileInfo", methods= ['POST'])
+    @bp.route("/changeProfileInfo", methods=['POST'])
     def changeProfileInfo():
         try:
             curr_username = session["username"]
@@ -32,12 +39,15 @@ def views(bp):
             value = request.form.get("value")
             placeholder = request.form.get("placeholder")
 
-            return render_template("change-profile-info.html", field=field, value=value, placeholder=placeholder)
+            return render_template("change-profile-info.html",
+                                   field=field,
+                                   value=value,
+                                   placeholder=placeholder)
 
         except:
             return redirect("/login")
 
-    @bp.route("/changeUsername", methods= ['POST'])
+    @bp.route("/changeUsername", methods=['POST'])
     def changeUsername():
         try:
             curr_username = session["username"]
@@ -51,7 +61,7 @@ def views(bp):
         except:
             return redirect("/login")
 
-    @bp.route("/changeFirstName", methods= ['POST'])
+    @bp.route("/changeFirstName", methods=['POST'])
     def changeFirstName():
         try:
             curr_username = session["username"]
@@ -65,7 +75,7 @@ def views(bp):
         except:
             return redirect("/login")
 
-    @bp.route("/changeLastName", methods= ['POST'])
+    @bp.route("/changeLastName", methods=['POST'])
     def changeLastName():
         try:
             curr_username = session["username"]
@@ -79,7 +89,7 @@ def views(bp):
         except:
             return redirect("/login")
 
-    @bp.route("/changeEmailAddress", methods= ['POST'])
+    @bp.route("/changeEmailAddress", methods=['POST'])
     def changeEmailAddress():
         try:
             curr_username = session["username"]
@@ -93,7 +103,7 @@ def views(bp):
         except:
             return redirect("/login")
 
-    @bp.route("/changePhoneNumber", methods= ['POST'])
+    @bp.route("/changePhoneNumber", methods=['POST'])
     def changePhoneNumber():
         try:
             curr_username = session["username"]

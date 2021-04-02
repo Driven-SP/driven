@@ -3,10 +3,12 @@ from firebase_admin import credentials, firestore, initialize_app
 
 #  we reference this db for each change in data that we do
 #  cred_path = os.path.join(app.root_path, 'firestore-cred.json')
-cred = credentials.Certificate('/Users/psapkota/source/driven-clean/driven/firestore-cred.json')
+cred = credentials.Certificate(
+    '/Users/psapkota/source/driven-clean/driven/firestore-cred.json')
 initialize_app(cred)
 
 db = firestore.client()
+
 
 # User API
 def signUpUser(fname, lname, email, phone, username, password):
@@ -23,16 +25,16 @@ def signUpUser(fname, lname, email, phone, username, password):
             return False
 
     new_user_data = {
-    u'fname': fname,
-    u'lname': lname,
-    u'username': username,
-    u'email': email,
-    u'phone': phone,
-    u'password-hash': password,
-    u'primary-address': "",
-    u'active-addresses' : [],
-    u'inactive-addresses' : [],
-    u'vendors-with-access' : []
+        u'fname': fname,
+        u'lname': lname,
+        u'username': username,
+        u'email': email,
+        u'phone': phone,
+        u'password-hash': password,
+        u'primary-address': "",
+        u'active-addresses': [],
+        u'inactive-addresses': [],
+        u'vendors-with-access': []
     }
 
     #  let firebase create document_id automatically autotmatically
@@ -40,6 +42,7 @@ def signUpUser(fname, lname, email, phone, username, password):
     new_user_ref.set(new_user_data)
 
     return True
+
 
 #  takes in username and password
 #  returns True if valid user credentials and False if invalid user credentials
@@ -55,18 +58,15 @@ def validateCredUser(user_document_id, password):
 
 #  Profile API
 
+
 def changeLnameUser(user_document_id, new_lname):
     user_ref = db.collection(u'users').document(user_document_id)
-    user_ref.set({
-        u'lname': new_lname
-    }, merge=True)
+    user_ref.set({u'lname': new_lname}, merge=True)
 
 
 def changeFnameUser(user_document_id, new_fname):
     user_ref = db.collection(u'users').document(user_document_id)
-    user_ref.set({
-        u'fname': new_fname
-    }, merge=True)
+    user_ref.set({u'fname': new_fname}, merge=True)
 
 
 #  updated username should also be unique
@@ -79,9 +79,7 @@ def changeUsernameUser(user_document_id, new_username):
             return False
 
     user_ref = db.collection(u'users').document(user_document_id)
-    user_ref.set({
-        u'username': new_username
-    }, merge=True)
+    user_ref.set({u'username': new_username}, merge=True)
     return True
 
 
@@ -95,24 +93,19 @@ def changeEmailUser(user_document_id, new_email):
             return False
 
     user_ref = db.collection(u'users').document(user_document_id)
-    user_ref.set({
-        u'email': new_email
-    }, merge=True)
+    user_ref.set({u'email': new_email}, merge=True)
     return True
 
 
 def changePhoneUser(user_document_id, new_phone):
     user_ref = db.collection(u'users').document(user_document_id)
-    user_ref.set({
-        u'phone': new_phone
-    }, merge=True)
+    user_ref.set({u'phone': new_phone}, merge=True)
 
 
 def changePasswordUser(user_document_id, new_password):
     user_ref = db.collection(u'users').document(user_document_id)
-    user_ref.set({
-        u'password-hash': new_password
-    }, merge=True)
+    user_ref.set({u'password-hash': new_password}, merge=True)
+
 
 def getUserProfileInfo(user_document_id):
     user_info = getUserInfo(user_document_id)
@@ -128,14 +121,13 @@ def getUserProfileInfo(user_document_id):
 
 #  Address API
 
+
 #  limitation: this could fail if unregistered username is provided, but since this is an internal
 #  api, we should  call this only on registerd username
 def addAddressUser(user_document_id, address):
     # register address in firebase first
     new_address_ref = db.collection(u'addresses').document()
-    new_address_ref.set({
-        u'address': address
-    })
+    new_address_ref.set({u'address': address})
 
     #  todo: add check for dupliacy here, currently duplicate address cann live for a user
     #  this new address document_id is always unique, so it is not possible to tell if there
@@ -146,9 +138,7 @@ def addAddressUser(user_document_id, address):
     user_active_addresses.append(new_address_ref.get().id)
 
     #  now, finally replace with new array containing the new address document id
-    user_ref.set({
-        u'active-addresses': user_active_addresses
-    }, merge=True)
+    user_ref.set({u'active-addresses': user_active_addresses}, merge=True)
 
 
 #  move address to inactive list
@@ -166,10 +156,12 @@ def deleteAddressUser(user_document_id, address_id):
     user_inactive_addresses.append(address_id)
 
     #  now, finally replace with new arrays
-    user_ref.set({
-        u'active-addresses': user_active_addresses,
-        u'inactive-addresses': user_inactive_addresses
-    }, merge=True)
+    user_ref.set(
+        {
+            u'active-addresses': user_active_addresses,
+            u'inactive-addresses': user_inactive_addresses
+        },
+        merge=True)
 
 
 #  this is the reverse of delete address, it moves address from inactive list to active list
@@ -185,10 +177,12 @@ def reviveAddressUser(user_document_id, address_id):
     user_active_addresses.append(address_id)
 
     #  now, finally replace with new arrays
-    user_ref.set({
-        u'active-addresses': user_active_addresses,
-        u'inactive-addresses': user_inactive_addresses
-    }, merge=True)
+    user_ref.set(
+        {
+            u'active-addresses': user_active_addresses,
+            u'inactive-addresses': user_inactive_addresses
+        },
+        merge=True)
 
 
 #  we need to make sure that username exists and that given address_id is in active address list
@@ -209,10 +203,12 @@ def changePrimaryAddressUser(user_document_id, address_id):
     user_active_addresses.remove(address_id)
 
     #  now, finally replace with new values
-    user_ref.set({
-        u'active-addresses': user_active_addresses,
-        u'primary-address': address_id
-    }, merge=True)
+    user_ref.set(
+        {
+            u'active-addresses': user_active_addresses,
+            u'primary-address': address_id
+        },
+        merge=True)
 
 
 # Packages API
@@ -221,6 +217,7 @@ def changePrimaryAddressUser(user_document_id, address_id):
 # Vendor API
 def getUserAddressVendor(user_document_id):
     pass
+
 
 def validateCredVendor(user_document_id, password):
     pass
@@ -231,6 +228,7 @@ def validateCredVendor(user_document_id, password):
 #  todo: use utilitity functions in above APIs, we can even optimize further by giving info that
 #  we have already fetched from firebase so that we don't have to fetch it again
 
+
 def getDocumentIdOfUser(username):
     users = db.collection(u'users').stream()
     for user in users:
@@ -239,30 +237,36 @@ def getDocumentIdOfUser(username):
             return user.id
     return ""
 
+
 def getUserInfo(user_document_id):
     user_ref = db.collection(u'users').document(user_document_id)
     user_info = user_ref.get().to_dict()
     return user_info
+
 
 #  supply a valid user_document_id
 def getActiveAddressIds(user_document_id):
     user_info = getUserInfo(user_document_id)
     return user_info["active-addresses"]
 
+
 #  supply a valid user_document_id
 def getInactiveAddressIds(user_document_id):
     user_info = getUserInfo(user_document_id)
     return user_info["inactive-addresses"]
+
 
 #  supply a valid user_document_id
 def getPrimaryAddressId(user_document_id):
     user_info = getUserInfo(user_document_id)
     return user_info["primary-address"]
 
+
 def getAddressFromId(address_id):
     address_ref = db.collection(u'addresses').document(address_id)
     address_info = address_ref.get().to_dict()
     return address_info["address"]
+
 
 def getActiveAddresses(user_document_id):
     active_address_ids = getActiveAddressIds(user_document_id)
@@ -271,6 +275,7 @@ def getActiveAddresses(user_document_id):
         active_addresses.append(getAddressFromId(address_id))
     return active_addresses
 
+
 def getInactiveAddresses(user_document_id):
     inactive_address_ids = getInactiveAddressIds(user_document_id)
     inactive_addresses = []
@@ -278,11 +283,13 @@ def getInactiveAddresses(user_document_id):
         inactive_addresses.append(getAddressFromId(address_id))
     return inactive_addresses
 
+
 def getPrimaryAddress(user_document_id):
     primary_address_id = getPrimaryAddressId(user_document_id)
     if primary_address_id:
         return getAddressFromId(primary_address_id)
     return ""
+
 
 def getIdAddressMap(user_document_id, address_type):
     if address_type == "ACTIVE":
@@ -299,7 +306,6 @@ def getIdAddressMap(user_document_id, address_type):
         return map_id_inactive_address
     else:
         raise Exception("address_type should be either ACTIVE or INACTIVE")
-
 
 
 #  dev testing

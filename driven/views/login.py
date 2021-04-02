@@ -3,9 +3,10 @@ from flask import request, session
 from driven.firestore_api import validateCredUser, signUpUser, getDocumentIdOfUser
 from driven.firestore_api import getIdAddressMap, getPrimaryAddress, getDocumentIdOfUser
 
+
 #  RenderFunctions
 def views(bp):
-    @bp.route("/login", methods = ['POST', 'GET'])
+    @bp.route("/login", methods=['POST', 'GET'])
     def viewLogin():
         # do not make session permanent
         #  even with this, session persists until browser is completely shut down
@@ -28,20 +29,26 @@ def views(bp):
                 session["user_document_id"] = user_document_id
 
                 user_primary_address = getPrimaryAddress(user_document_id)
-                user_active_id_and_addresses = getIdAddressMap(user_document_id, "ACTIVE")
-                user_inactive_id_and_addresses = getIdAddressMap(user_document_id, "INACTIVE")
+                user_active_id_and_addresses = getIdAddressMap(
+                    user_document_id, "ACTIVE")
+                user_inactive_id_and_addresses = getIdAddressMap(
+                    user_document_id, "INACTIVE")
 
-                return render_template("address.html", name=username, primary_address=user_primary_address, active_id_and_addresses=user_active_id_and_addresses, inactive_id_and_addresses=user_inactive_id_and_addresses)
+                return render_template(
+                    "address.html",
+                    name=username,
+                    primary_address=user_primary_address,
+                    active_id_and_addresses=user_active_id_and_addresses,
+                    inactive_id_and_addresses=user_inactive_id_and_addresses)
 
         return render_template("login.html")
 
-
-    @bp.route("/logout", methods = ['GET'])
+    @bp.route("/logout", methods=['GET'])
     def viewLogout():
         session.pop("username", None)
         return redirect("/login")
 
-    @bp.route("/signup", methods = ['GET', 'POST'])
+    @bp.route("/signup", methods=['GET', 'POST'])
     def viewSignup():
         if request.method == 'GET':
             return render_template("signup.html")
@@ -54,7 +61,8 @@ def views(bp):
             password = request.form.get("password")
             reenter_password = request.form.get("reenter_password")
 
-            if (password == reenter_password) and (signUpUser(fname, lname, email, phone, username, password) is True):
+            if (password == reenter_password) and (signUpUser(
+                    fname, lname, email, phone, username, password) is True):
                 #  todo: give feedback regarding why the signup process was not successful
                 return render_template("login.html")
         return render_template("signup.html")

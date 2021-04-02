@@ -1,17 +1,22 @@
 from flask import render_template, request
 
+
 # might not need all these methods
 def viewAddressVendorsMapHelper(conn):
     pass
 
+
 def deleteVendorAddressAssociationFromDB(conn, vendor_id, address_id):
     pass
+
 
 def revokeVendorAddressAssociationFromDB(conn, vendor_id, address_id):
     pass
 
+
 def grantVendorAddressAssociationFromDB(conn, vendor_id, address_id):
     pass
+
 
 #  RenderFunctions
 def views(bp):
@@ -19,11 +24,11 @@ def views(bp):
     def viewAddressVendorsMap():
         pass
 
-    @bp.route("/addressvendorsmap/add", methods = ['POST', 'GET'])
+    @bp.route("/addressvendorsmap/add", methods=['POST', 'GET'])
     def renderAddAddressVendorsMapForm():
         pass
 
-    @bp.route("/addressvendorsmap/add/submit", methods = ['POST', 'GET'])
+    @bp.route("/addressvendorsmap/add/submit", methods=['POST', 'GET'])
     def AddAddressVendorsMap():
         pass
 

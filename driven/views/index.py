@@ -1,5 +1,6 @@
 from flask import render_template, session
 
+
 def views(bp):
     @bp.route("/")
     def index():

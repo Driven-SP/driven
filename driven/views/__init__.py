@@ -16,6 +16,7 @@ contact.views(blueprint)
 login.views(blueprint)
 addressvendorsmap.views(blueprint)
 
+
 def init_app(app):
     app.register_blueprint(blueprint)
     app.add_url_rule('/', endpoint='index')

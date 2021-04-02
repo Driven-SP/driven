@@ -1,21 +1,29 @@
 from flask import render_template, request, session, redirect
-from  driven.firestore_api import getIdAddressMap, getPrimaryAddress, addAddressUser, deleteAddressUser, reviveAddressUser, changePrimaryAddressUser
+from driven.firestore_api import getIdAddressMap, getPrimaryAddress, addAddressUser, deleteAddressUser, reviveAddressUser, changePrimaryAddressUser
+
 
 def views(bp):
-    @bp.route("/address", methods= ['GET', 'POST'])
+    @bp.route("/address", methods=['GET', 'POST'])
     def viewAddress():
         try:
             curr_username = session["username"]
             curr_user_doc_id = session["user_document_id"]
             user_primary_address = getPrimaryAddress(curr_user_doc_id)
-            user_active_id_and_addresses = getIdAddressMap(curr_user_doc_id, "ACTIVE")
-            user_inactive_id_and_addresses = getIdAddressMap(curr_user_doc_id, "INACTIVE")
+            user_active_id_and_addresses = getIdAddressMap(
+                curr_user_doc_id, "ACTIVE")
+            user_inactive_id_and_addresses = getIdAddressMap(
+                curr_user_doc_id, "INACTIVE")
 
-            return render_template("address.html", name=curr_username, primary_address=user_primary_address, active_id_and_addresses=user_active_id_and_addresses, inactive_id_and_addresses=user_inactive_id_and_addresses)
+            return render_template(
+                "address.html",
+                name=curr_username,
+                primary_address=user_primary_address,
+                active_id_and_addresses=user_active_id_and_addresses,
+                inactive_id_and_addresses=user_inactive_id_and_addresses)
 
         except:
             return redirect("/login")
- 
+
     @bp.route("/removeAddress", methods=['POST'])
     def removeAddress():
         try:
@@ -51,7 +59,7 @@ def views(bp):
 
         pass
 
-    @bp.route("/add_address", methods= ['POST', 'GET'])
+    @bp.route("/add_address", methods=['POST', 'GET'])
     def addAddress():
         user_document_id = ""
         #  validate user is logged in
@@ -75,8 +83,8 @@ def views(bp):
             try:
                 addAddressUser(user_document_id, full_address)
             except Exception:
-                return render_template("form_error.html", errors=["Failed to add new address"])
+                return render_template("form_error.html",
+                                       errors=["Failed to add new address"])
 
             #  if successful insertion, show the user's current address
             return redirect("/address")
-
