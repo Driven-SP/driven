@@ -35,6 +35,8 @@ def signUpUser(fname, lname, email, phone, username, password):
         u'primary-address': "",
         u'active-addresses': [],
         u'inactive-addresses': [],
+        u'delivered-packages': [],
+        u'undelivered-packages': [],
         u'vendors-with-access': dict()
     }
 
@@ -224,10 +226,62 @@ def changePrimaryAddressUser(user_document_id, address_id):
         merge=True)
 
 
-# Packages API
+# Packages (internal) API
+#  todo: re-evaluate if user and vendor auth needed here
+
+def createPackageRecord(tracking_num, status, initial_description, vendor, username):
+    """ create a record for a package in firestore
+
+    """
+    new_package_data = {
+        u'status': status,
+        u'status-description': initial_description,
+        u'tracking-number': tracking_num,
+        u'vendor': vendor,
+    }
+    #  get a new package document reference
+    new_package_ref = db.collection(u'packages').document()
+    new_package_ref.set(new_package_data)
+    package_doc_id = new_package_ref.get().id
+
+    user_doc_id = getDocumentIdOfUser(username)
+    #  invalid username
+    if user_doc_id == "":
+        return ""
+    user_ref = db.collection(u'users').document(user_doc_id)
+    user_info = user_ref.get().to_dict()
+    undelivered_packages = user_info["undelivered-packages"]
+    undelivered_packages.append(package_doc_id)
+
+    #  update the undelivered packages list in user record
+    user_ref.set({u'undelivered-packages': undelivered_packages}, merge=True)
+
+    return package_doc_id
+
+def updatePackageStatus(username, package_doc_id, status, status_description):
+    try:
+        package_ref = db.collection(u'packages').document(package_doc_id)
+    except:
+        return False
+
+    status = status.lower()
+    if status == "delivered":
+        user_doc_id = getDocumentIdOfUser(username)
+        user_ref = db.collection(u'users').document(user_doc_id)
+        user_info = user_ref.get().to_dict()
+        undelivered_packages = user_info["undelivered-packages"]
+        delivered_packages = user_info["delivered-packages"]
+        undelivered_packages.remove(package_doc_id)
+        delivered_packages.append(package_doc_id)
+
+        #  update undelivered and delivered packages list in user record
+        user_ref.set({u'undelivered-packages': undelivered_packages, u'delivered-packages':  delivered_packages}, merge=True)
+
+    package_ref.set({u'status': status, u'status-description': status_description}, merge=True)
+    return True
+
 
 # Vendor(internal) API
-
 
 #  get a list of all active addresses and primary address, return None if vendor validation fails
 def getUserAddressesVendor(vendor_id, vendor_token, user_document_id):
@@ -430,3 +484,6 @@ def getIdAddressMap(user_document_id, address_type):
 #  print(validateTokenVendor("amazon", "OVrduCUV6xVlx5S7BRJ6XRYrG4_BFBnc1bRdp7nm4XrbwEEMbcXNMA"))
 #  print(getUserAddressesVendor("amazon", "afdasfafa", "eg1CSf5wQIDk0QhpN3vZ"))
 #  print(getUserAddressesVendor("ebay", "OVrduCUV6xVlx5S7BRJ6XRYrG4_BFBnc1bRdp7nm4XrbwEEMbcXNMA", "eg1CSf5wQIDk0QhpN3vZ"))
+#  createPackageRecord("sample tracking number", "sample initial description", "amazon", "anmol")
+#  updatePackageStatus("anmol", "BLQmoA1GajUPz2IXEN3p", "DELIVERED", "Package thrown at front door")
+#  updatePackageStatus("anmol", "IgqjKWdwC249CyieeJQK", "IN PROGRESS", "Package arrived local Amazon facility")
