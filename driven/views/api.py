@@ -45,7 +45,7 @@ def views(bp):
         return resp
 
     @bp.route("/api/createPackageRecord", methods=["POST"])
-    def viewsCreatePackageRecord():
+    def viewCreatePackageRecord():
         data = request.get_json()
         username = data["driven_mail_username"]
         vendor_id = data["driven_mail_vendor_id"]
