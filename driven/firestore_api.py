@@ -1,3 +1,4 @@
+import secrets
 import firebase_admin
 from firebase_admin import credentials, firestore, initialize_app
 
@@ -34,7 +35,9 @@ def signUpUser(fname, lname, email, phone, username, password):
         u'primary-address': "",
         u'active-addresses': [],
         u'inactive-addresses': [],
-        u'vendors-with-access': []
+        u'delivered-packages': [],
+        u'undelivered-packages': [],
+        u'vendors-with-access': dict()
     }
 
     #  let firebase create document_id automatically autotmatically
@@ -149,17 +152,29 @@ def deleteAddressUser(user_document_id, address_id):
     user_ref = db.collection(u'users').document(user_document_id)
     user_info = user_ref.get().to_dict()
 
+    # if access given to vendor, remove that as well
+    # we need to make a copy as we cannot change dictionary state when it is being procesed
+    vendor_address_map = user_info["vendors-with-access"]
+    vendor_address_map_copy = dict()
+
+    for vendor, addresses in vendor_address_map.items():
+        vendor_address_map_copy[vendor] = []
+        for address in addresses:
+            if address != address_id:
+                vendor_address_map_copy[vendor].append(address)
+
     user_active_addresses = user_info["active-addresses"]
     user_inactive_addresses = user_info["inactive-addresses"]
 
     user_active_addresses.remove(address_id)
     user_inactive_addresses.append(address_id)
 
-    #  now, finally replace with new arrays
+    #  now, finally replace with new arrays, and dictionary
     user_ref.set(
         {
             u'active-addresses': user_active_addresses,
-            u'inactive-addresses': user_inactive_addresses
+            u'inactive-addresses': user_inactive_addresses,
+            u'vendors-with-access': vendor_address_map_copy
         },
         merge=True)
 
@@ -211,16 +226,128 @@ def changePrimaryAddressUser(user_document_id, address_id):
         merge=True)
 
 
-# Packages API
+# Packages (internal) API
+#  todo: re-evaluate if user and vendor auth needed here
 
 
-# Vendor API
-def getUserAddressVendor(user_document_id):
-    pass
+def createPackageRecord(tracking_num, status, initial_description, vendor,
+                        username):
+    """ create a record for a package in firestore
+
+    """
+    new_package_data = {
+        u'status': status,
+        u'status-description': initial_description,
+        u'tracking-number': tracking_num,
+        u'vendor': vendor,
+    }
+    #  get a new package document reference
+    new_package_ref = db.collection(u'packages').document()
+    new_package_ref.set(new_package_data)
+    package_doc_id = new_package_ref.get().id
+
+    user_doc_id = getDocumentIdOfUser(username)
+    #  invalid username
+    if user_doc_id == "":
+        return ""
+    user_ref = db.collection(u'users').document(user_doc_id)
+    user_info = user_ref.get().to_dict()
+    undelivered_packages = user_info["undelivered-packages"]
+    undelivered_packages.append(package_doc_id)
+
+    #  update the undelivered packages list in user record
+    user_ref.set({u'undelivered-packages': undelivered_packages}, merge=True)
+
+    return package_doc_id
 
 
-def validateCredVendor(user_document_id, password):
-    pass
+def updatePackageStatus(username, package_doc_id, status, status_description):
+    try:
+        package_ref = db.collection(u'packages').document(package_doc_id)
+        user_doc_id = getDocumentIdOfUser(username)
+    except:
+        return False
+
+    status = status.lower()
+    if status == "delivered":
+        user_ref = db.collection(u'users').document(user_doc_id)
+        user_info = user_ref.get().to_dict()
+        undelivered_packages = user_info["undelivered-packages"]
+        delivered_packages = user_info["delivered-packages"]
+        undelivered_packages.remove(package_doc_id)
+        delivered_packages.append(package_doc_id)
+
+        #  update undelivered and delivered packages list in user record
+        user_ref.set(
+            {
+                u'undelivered-packages': undelivered_packages,
+                u'delivered-packages': delivered_packages
+            },
+            merge=True)
+
+    package_ref.set(
+        {
+            u'status': status,
+            u'status-description': status_description
+        },
+        merge=True)
+    return True
+
+
+# Vendor(internal) API
+
+
+#  get a list of all active addresses and primary address, return None if vendor validation fails
+def getUserAddressesVendor(vendor_id, vendor_token, user_document_id):
+    valid_vendor = validateTokenVendor(vendor_id, vendor_token)
+    if valid_vendor is True:
+        user_ref = db.collection(u'users').document(user_document_id)
+        user_info = user_ref.get().to_dict()
+        vendor_address_map = user_info["vendors-with-access"]
+
+        address_ids = []
+        for vendor, addresses in vendor_address_map.items():
+            if vendor == vendor_id:
+                address_ids = addresses
+
+        address_id_to_address = dict()
+        for address_id in address_ids:
+            address_ref = db.collection(u'addresses').document(address_id)
+            address_info = address_ref.get().to_dict()
+            address_id_to_address[address_id] = address_info["address"]
+        return address_id_to_address
+    return None
+
+
+#  todo: maybe later
+#  def validateCredVendor(vendor, user_document_id, password):
+#  pass
+
+
+#  return True if validated, else  False
+def validateTokenVendor(vendor_id, vendor_token):
+    vendors = db.collection(u'vendors').stream()
+    for vendor in vendors:
+        if vendor.id == vendor_id:
+            vendor_ref = db.collection(u'vendors').document(vendor_id)
+            vendor_data = vendor_ref.get().to_dict()
+            if vendor_data["token"] == vendor_token:
+                return True
+    return False
+
+
+#  return token if vendor_id is unique, otherwise return empty string
+def generateTokenVendor(vendor_id, vendor_name):
+    vendors = db.collection(u'vendors').stream()
+    for vendor in vendors:
+        if vendor.id == vendor_id:
+            return ""
+
+    #  vendor does not exist, so create one
+    token = secrets.token_urlsafe(40)
+    vendor_data = {u'name': vendor_name, u'token': token}
+    db.collection(u'vendors').document(vendor_id).set(vendor_data)
+    return token
 
 
 #  utility functions
@@ -361,3 +488,16 @@ def getIdAddressMap(user_document_id, address_type):
 #  changeEmailUser("iiGbVTaYWHsv4p26OPam", "kmishra@gmail.com")
 
 #  print(getUserProfileInfo("o4UYfQj2hVy8s40bDRB9"))
+
+#  deleteAddressUser("eg1CSf5wQIDk0QhpN3vZ", "ZtkGP7YZvuOVQmqAZMpc")
+#  print(generateTokenVendor("ebay", "Ebay Online"))
+#  print(generateTokenVendor("amazon", "Amazon Online"))
+
+#  print(validateTokenVendor("amazon", "afdasfafa"))
+#  print(validateTokenVendor("ebay", "OVrduCUV6xVlx5S7BRJ6XRYrG4_BFBnc1bRdp7nm4XrbwEEMbcXNMA"))
+#  print(validateTokenVendor("amazon", "OVrduCUV6xVlx5S7BRJ6XRYrG4_BFBnc1bRdp7nm4XrbwEEMbcXNMA"))
+#  print(getUserAddressesVendor("amazon", "afdasfafa", "eg1CSf5wQIDk0QhpN3vZ"))
+#  print(getUserAddressesVendor("ebay", "OVrduCUV6xVlx5S7BRJ6XRYrG4_BFBnc1bRdp7nm4XrbwEEMbcXNMA", "eg1CSf5wQIDk0QhpN3vZ"))
+#  createPackageRecord("sample tracking number", "sample initial description", "amazon", "anmol")
+#  updatePackageStatus("anmol", "BLQmoA1GajUPz2IXEN3p", "DELIVERED", "Package thrown at front door")
+#  updatePackageStatus("anmol", "IgqjKWdwC249CyieeJQK", "IN PROGRESS", "Package arrived local Amazon facility")

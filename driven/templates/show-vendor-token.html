@@ -1,0 +1,16 @@
+{%- extends "base.html" %}
+
+{% block content %}
+
+<h1> Vendor ID: {{ vendor_id }} </h1>
+<h1> Vendor name: {{ vendor_name }} </h1>
+<br>
+<h1> Your token is </h1>
+
+<div class="alert alert-info" role="alert">
+	{{ vendor_token }}
+</div>
+
+{%- endblock %}
+
+
