@@ -226,6 +226,61 @@ def changePrimaryAddressUser(user_document_id, address_id):
         merge=True)
 
 
+#  This is ony called for active addresses and primary address
+def addVendorAccess(user_document_id, vendor_id, address_id):
+    user_ref = db.collection(u'users').document(user_document_id)
+    user_info = user_ref.get().to_dict()
+    vendors_with_access = user_info["vendors-with-access"]
+
+    copy_vendors_with_access = dict()
+    vendor_id_found = False
+
+    for db_vendor_id, address_id_list in vendors_with_access.items():
+        if db_vendor_id == vendor_id:
+            vendor_id_found = True
+
+            #  check if address already exists in the list
+            for address_id_in_list in address_id_list:
+                if address_id_in_list == address_id:
+                    #  both address_id and vendor_id exist as we needed
+                    return
+            copy_address_id_list = address_id_list
+            copy_address_id_list.append(address_id)
+            copy_vendors_with_access[db_vendor_id] = copy_address_id_list
+        else:
+            copy_vendors_with_access[db_vendor_id] = address_id_list
+
+    #  create first entry if vendor_id does not exist
+    if vendor_id_found is False:
+        copy_vendors_with_access[vendor_id] = [address_id]
+
+    user_ref.set({u'vendors-with-access': copy_vendors_with_access},
+                 merge=True)
+
+
+#  This is ony called for active addresses and primary address
+def revokeVendorAccess(user_document_id, vendor_id, address_id):
+    user_ref = db.collection(u'users').document(user_document_id)
+    user_info = user_ref.get().to_dict()
+    vendors_with_access = user_info["vendors-with-access"]
+
+    copy_vendors_with_access = dict()
+
+    #  if we don't find vendor_id, there was no access entry for vendor in the first place
+    #  so we don't have to do anything
+    for db_vendor_id, address_id_list in vendors_with_access.items():
+        if db_vendor_id == vendor_id:
+            vendor_id_found = True
+            copy_address_id_list = address_id_list
+            copy_address_id_list.remove(address_id)
+            copy_vendors_with_access[db_vendor_id] = copy_address_id_list
+        else:
+            copy_vendors_with_access[db_vendor_id] = address_id_list
+
+    user_ref.set({u'vendors-with-access': copy_vendors_with_access},
+                 merge=True)
+
+
 # Packages (internal) API
 #  todo: re-evaluate if user and vendor auth needed here
 
@@ -458,6 +513,22 @@ def getIdAddressMap(user_document_id, address_type):
         return map_id_inactive_address
     else:
         raise Exception("address_type should be either ACTIVE or INACTIVE")
+
+
+def getVendorSearchResults(vendor_query):
+    """TODO: Search vendor_id based on query
+    :returns: dictionary of vendor_id and vendor_name
+
+    """
+    search_results = dict()
+
+    #  add fuzzy search for both vendor id and vendor name here
+    vendors = db.collection(u'vendors').stream()
+    for vendor in vendors:
+        if vendor.id == vendor_query:
+            vendor_info = vendor.to_dict()
+            search_results[vendor.id] = vendor_info["name"]
+    return search_results
 
 
 #  dev testing

@@ -1,5 +1,5 @@
 from flask import render_template, request, session, redirect
-from driven.firestore_api import getIdAddressMap, getPrimaryAddress, addAddressUser, deleteAddressUser, reviveAddressUser, changePrimaryAddressUser
+from driven.firestore_api import getIdAddressMap, getPrimaryAddress, addAddressUser, deleteAddressUser, reviveAddressUser, changePrimaryAddressUser, addVendorAccess, revokeVendorAccess, getVendorSearchResults
 
 
 def views(bp):
@@ -57,8 +57,6 @@ def views(bp):
             #  todo: maybe redirect to login page cause it is possible that the user is not logged in
             return redirect("/address")
 
-        pass
-
     @bp.route("/add_address", methods=['POST', 'GET'])
     def addAddress():
         user_document_id = ""
@@ -88,3 +86,47 @@ def views(bp):
 
             #  if successful insertion, show the user's current address
             return redirect("/address")
+
+    @bp.route("/addAccess", methods=['POST'])
+    def addAccess():
+        address_id = request.form.get("address_id")
+        action = "add"
+        return render_template("search-vendors.html",
+                               address_id=address_id,
+                               action=action)
+
+    @bp.route("/revokeAccess", methods=['POST'])
+    def revokeAccess():
+        address_id = request.form.get("address_id")
+        action = "revoke"
+        return render_template("search-vendors.html",
+                               address_id=address_id,
+                               action=action)
+
+    @bp.route("/showSearchResults", methods=['POST'])
+    def showSearchResults():
+        address_id = request.form.get("address_id")
+        action = request.form.get("action")
+        vendor_query = request.form.get("vendor_query")
+
+        search_results = getVendorSearchResults(vendor_query)
+        return render_template("show-search-results.html",
+                               search_results=search_results,
+                               address_id=address_id,
+                               action=action)
+
+    @bp.route("/conformAccessAction", methods=['POST'])
+    def conformAccessAction():
+        try:
+            user_document_id = session["user_document_id"]
+        except:
+            return redirect("/login")
+        vendor_id = request.form.get("vendor_id")
+        address_id = request.form.get("address_id")
+        action = request.form.get("action")
+
+        if action == "add":
+            addVendorAccess(user_document_id, vendor_id, address_id)
+        elif action == "revoke":
+            revokeVendorAccess(user_document_id, vendor_id, address_id)
+        return redirect("/address")

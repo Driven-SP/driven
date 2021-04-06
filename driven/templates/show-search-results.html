@@ -1,0 +1,26 @@
+{%- extends "base.html" %}
+
+{% block content %}
+
+<h1 class="display-4"> Vendor Search Results: </h1>
+
+{{ address_id }}
+{% for vendor_id, vendor_name in search_results.items() %}
+
+<form method="post">
+	<input type="hidden" name="address_id" value="{{ address_id }}">
+	<input type="hidden" name="action" value="{{ action }}">
+	<input type="hidden" name="vendor_id" value="{{ vendor_id }}">
+
+	<div class="alert alert-primary" role="alert">
+		{{ vendor_id }} 
+		Full Name: {{ vendor_name }}
+		<button formaction="/conformAccessAction" type="submit" class="btn btn-success">Select</button>
+	</div>
+</form>
+
+{% endfor %}
+
+{%- endblock %}
+
+
