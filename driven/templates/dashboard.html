@@ -2,7 +2,33 @@
 
 {% block content %}
 
-<p>logged in user is {{ username }} </p>
+<h1 class="display-4"> Packages: </h1>
+
+{% for package in undelivered_info %}
+	<div class="alert alert-warning" role="alert">
+		Status: {{ package["status"] }}
+		<br>
+		{{ package["status-description"] }}
+		<br>
+		From : {{ package["vendor"] }}
+		<br>
+		Tracking number: {{ package["tracking-number"] }}
+	</div>
+{% endfor %}
+
+{% for package in delivered_info %}
+	<div class="alert alert-success" role="alert">
+		Status: {{ package["status"] }}
+		<br>
+		{{ package["status-description"] }}
+		<br>
+		From : {{ package["vendor"] }}
+		<br>
+		Tracking number: {{ package["tracking-number"] }}
+	</div>
+{% endfor %}
+
+
 
 {%- endblock %}
 

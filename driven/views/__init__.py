@@ -7,7 +7,6 @@ from driven.views import contact
 from driven.views import login
 from driven.views import vendor
 from driven.views import api
-from driven.views import addressvendorsmap
 
 blueprint = Blueprint('views', __name__)
 index.views(blueprint)
@@ -18,7 +17,6 @@ contact.views(blueprint)
 login.views(blueprint)
 vendor.views(blueprint)
 api.views(blueprint)
-addressvendorsmap.views(blueprint)
 
 
 def init_app(app):
