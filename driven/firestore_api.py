@@ -294,6 +294,31 @@ def updatePackageStatus(username, package_doc_id, status, status_description):
     return True
 
 
+def getPackagesForDashboard(user_document_id):
+    """ collect and return all information required to display in dashboard for logged in user
+    :returns:
+
+    """
+    user_ref = db.collection(u'users').document(user_document_id)
+    user_info = user_ref.get().to_dict()
+    delivered_packages = user_info["delivered-packages"]
+    undelivered_packages = user_info["undelivered-packages"]
+
+    delivered_info = []
+    undelivered_info = []
+    for package_id in delivered_packages:
+        package_ref = db.collection(u'packages').document(package_id)
+        package_info = package_ref.get().to_dict()
+        delivered_info.append(package_info)
+
+    for package_id in undelivered_packages:
+        package_ref = db.collection(u'packages').document(package_id)
+        package_info = package_ref.get().to_dict()
+        undelivered_info.append(package_info)
+
+    return (delivered_info, undelivered_info)
+
+
 # Vendor(internal) API
 
 
