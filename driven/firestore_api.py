@@ -226,8 +226,8 @@ def changePrimaryAddressUser(user_document_id, address_id):
 
 # Packages API
 
-
 # Vendor(internal) API
+
 
 #  get a list of all active addresses and primary address, return None if vendor validation fails
 def getUserAddressesVendor(vendor_id, vendor_token, user_document_id):
@@ -253,7 +253,7 @@ def getUserAddressesVendor(vendor_id, vendor_token, user_document_id):
 
 #  todo: maybe later
 #  def validateCredVendor(vendor, user_document_id, password):
-    #  pass
+#  pass
 
 
 #  return True if validated, else  False
@@ -277,10 +277,7 @@ def generateTokenVendor(vendor_id, vendor_name):
 
     #  vendor does not exist, so create one
     token = secrets.token_urlsafe(40)
-    vendor_data = {
-        u'name': vendor_name,
-        u'token': token
-    }
+    vendor_data = {u'name': vendor_name, u'token': token}
     db.collection(u'vendors').document(vendor_id).set(vendor_data)
     return token
 
