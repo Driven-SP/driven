@@ -53,7 +53,9 @@ def views(bp):
         status = data["status"]
         status_description = data["status_description"]
 
-        package_doc_id = createPackageRecord(tracking_num, status, status_description, vendor_id, username)
+        package_doc_id = createPackageRecord(tracking_num, status,
+                                             status_description, vendor_id,
+                                             username)
 
         message = {
             'status': 200,
@@ -72,7 +74,9 @@ def views(bp):
         status = data["status"]
         status_description = data["status_description"]
 
-        package_record_updated = updatePackageStatus(username, package_doc_id, status, status_description)
+        package_record_updated = updatePackageStatus(username, package_doc_id,
+                                                     status,
+                                                     status_description)
 
         operation_result = "Package record failed to update"
         if package_record_updated:

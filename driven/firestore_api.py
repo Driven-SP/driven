@@ -229,7 +229,9 @@ def changePrimaryAddressUser(user_document_id, address_id):
 # Packages (internal) API
 #  todo: re-evaluate if user and vendor auth needed here
 
-def createPackageRecord(tracking_num, status, initial_description, vendor, username):
+
+def createPackageRecord(tracking_num, status, initial_description, vendor,
+                        username):
     """ create a record for a package in firestore
 
     """
@@ -258,15 +260,16 @@ def createPackageRecord(tracking_num, status, initial_description, vendor, usern
 
     return package_doc_id
 
+
 def updatePackageStatus(username, package_doc_id, status, status_description):
     try:
         package_ref = db.collection(u'packages').document(package_doc_id)
+        user_doc_id = getDocumentIdOfUser(username)
     except:
         return False
 
     status = status.lower()
     if status == "delivered":
-        user_doc_id = getDocumentIdOfUser(username)
         user_ref = db.collection(u'users').document(user_doc_id)
         user_info = user_ref.get().to_dict()
         undelivered_packages = user_info["undelivered-packages"]
@@ -275,13 +278,24 @@ def updatePackageStatus(username, package_doc_id, status, status_description):
         delivered_packages.append(package_doc_id)
 
         #  update undelivered and delivered packages list in user record
-        user_ref.set({u'undelivered-packages': undelivered_packages, u'delivered-packages':  delivered_packages}, merge=True)
+        user_ref.set(
+            {
+                u'undelivered-packages': undelivered_packages,
+                u'delivered-packages': delivered_packages
+            },
+            merge=True)
 
-    package_ref.set({u'status': status, u'status-description': status_description}, merge=True)
+    package_ref.set(
+        {
+            u'status': status,
+            u'status-description': status_description
+        },
+        merge=True)
     return True
 
 
 # Vendor(internal) API
+
 
 #  get a list of all active addresses and primary address, return None if vendor validation fails
 def getUserAddressesVendor(vendor_id, vendor_token, user_document_id):
