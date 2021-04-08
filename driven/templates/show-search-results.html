@@ -4,7 +4,6 @@
 
 <h1 class="display-4"> Vendor Search Results: </h1>
 
-{{ address_id }}
 {% for vendor_id, vendor_name in search_results.items() %}
 
 <form method="post">
@@ -13,8 +12,10 @@
 	<input type="hidden" name="vendor_id" value="{{ vendor_id }}">
 
 	<div class="alert alert-primary" role="alert">
-		{{ vendor_id }} 
+		Vendor ID: {{ vendor_id }} 
+		<br>
 		Full Name: {{ vendor_name }}
+		<br><br>
 		<button formaction="/conformAccessAction" type="submit" class="btn btn-success">Select</button>
 	</div>
 </form>

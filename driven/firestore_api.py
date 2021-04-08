@@ -50,8 +50,11 @@ def signUpUser(fname, lname, email, phone, username, password):
 #  takes in username and password
 #  returns True if valid user credentials and False if invalid user credentials
 def validateCredUser(user_document_id, password):
-    user_ref = db.collection(u'users').document(user_document_id)
-    data = user_ref.get()
+    try:
+        user_ref = db.collection(u'users').document(user_document_id)
+        data = user_ref.get()
+    except:
+        return False
 
     if data.exists:
         data_dict = data.to_dict()
