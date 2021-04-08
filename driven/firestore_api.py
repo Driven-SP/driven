@@ -519,13 +519,13 @@ def getIdAddressMap(user_document_id, address_type):
 
 
 def getVendorSearchResults(vendor_query):
-    """TODO: Search vendor_id based on query
+    """ Search vendor_id based on query
     :returns: dictionary of vendor_id and vendor_name
 
     """
     search_results = dict()
 
-    #  add fuzzy search for both vendor id and vendor name here
+    #  todo: add fuzzy search for both vendor id and vendor name here
     vendors = db.collection(u'vendors').stream()
     for vendor in vendors:
         if vendor.id == vendor_query:
