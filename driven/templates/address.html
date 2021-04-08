@@ -16,13 +16,15 @@
 <p class="h4"> Currently Active Addresses: </p>
 <ul>
 	{% for id, address in active_id_and_addresses.items() %}
-	<form method="post">
 	<li> {{ address }} 
+	<form method="post">
 		<input type="hidden" name="address_id" value="{{ id }}">
 		<button type="submit" formaction="/removeAddress" class="btn btn-outline-danger btn-sm">Delete</button>
 		<button type="submit" formaction="/changePrimaryAddress" class="btn btn-outline-success btn-sm">Make Primary</button>
-	</li>
+		<button type="submit" formaction="/addAccess" class="btn btn-outline-success btn-sm">Add Access</button>
+		<button type="submit" formaction="/revokeAccess" class="btn btn-outline-warning btn-sm">Revoke Access</button>
 	</form>
+	</li>
 	<br>
 	{% endfor %}
 </ul>
@@ -30,12 +32,12 @@
 <p class="h4"> Previous/Inactive Addresses: </p>
 <ul>
 	{% for id, address in inactive_id_and_addresses.items() %}
+	<li> {{ address }}
 	<form action="/reviveAddress" method="post">
-		<li> {{ address }}
 			<input type="hidden" name="revive_address_id" value="{{ id }}">
 			<button type="submit" class="btn btn-outline-success btn-sm">Revive</button>
-		</li>
 	</form>
+	</li>
 	<br>
 	{% endfor %}
 </ul>

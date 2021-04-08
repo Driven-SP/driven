@@ -1,0 +1,16 @@
+{%- extends "base.html" %}
+
+{% block content %}
+
+<h1 class="display-4"> Search Vendors: </h1>
+
+<form method="post">
+	<input type="hidden" name="address_id" value="{{ address_id }}">
+	<input type="hidden" name="action" value="{{ action }}">
+	<input name="vendor_query" class="form-control form-control-lg" type="text" placeholder="ex: amazon" aria-label=".form-control-lg example">
+	<br>
+	<button formaction="/showSearchResults" type="submit" class="btn btn-success">Search</button>
+</form>
+
+{%- endblock %}
+
