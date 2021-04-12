@@ -5,7 +5,7 @@ from firebase_admin import credentials, firestore, initialize_app
 #  we reference this db for each change in data that we do
 #  cred_path = os.path.join(app.root_path, 'firestore-cred.json')
 cred = credentials.Certificate(
-    '/Users/psapkota/source/driven-clean/driven/firestore-cred.json')
+    'driven/firestore-cred.json')
 initialize_app(cred)
 
 db = firestore.client()
