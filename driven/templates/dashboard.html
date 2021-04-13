@@ -3,8 +3,17 @@
 {% block content %}
 
 <h1 class="display-4"> Packages: </h1>
+<br>
+<h1 class="display-8"> Undelivered Packages</h1>
+<br>
 
-{% for package in undelivered_info %}
+{% set addresses_undelivered = [] %}
+
+{% for package in undelivered_info|sort(attribute='address_id') %}
+	{% if package["address_id"] not in  addresses_undelivered %}
+		<h4 class="display-14"> {{ package["address"] }} </h4>
+		{% set tmp = addresses_undelivered.append( package["address_id"] ) %}
+	{% endif %}
 	<div class="alert alert-warning" role="alert">
 		Status: {{ package["status"] }}
 		<br>
@@ -12,17 +21,29 @@
 		<br>
 		From : {{ package["vendor"] }}
 		<br>
+		Address : {{ package["address_id"] }}
+		<br>
 		Tracking number: {{ package["tracking-number"] }}
 	</div>
 {% endfor %}
 
-{% for package in delivered_info %}
+<br>
+<h1 class="display-8"> Delivered Packages</h1>
+<br>
+{% set addresses_delivered = [] %}
+{% for package in delivered_info|sort(attribute='address_id') %}
+	{% if package["address_id"] not in  addresses_delivered %}
+    	<h4 class="display-14"> {{ package["address"] }} </h4>
+		{% set tmp = addresses_delivered.append( package["address_id"] ) %}
+	{% endif %}
 	<div class="alert alert-success" role="alert">
 		Status: {{ package["status"] }}
 		<br>
 		{{ package["status-description"] }}
 		<br>
 		From : {{ package["vendor"] }}
+		<br>
+		Address : {{ package["address_id"] }}
 		<br>
 		Tracking number: {{ package["tracking-number"] }}
 	</div>
