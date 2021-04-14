@@ -1,12 +1,12 @@
 '''
 Sample cURL requests:
-curl -X POST -H 'Content-Type: application/json' -d '{"driven_mail_username":"anmol", "driven_mail_user_password":"anmol-password","driven_mail_vendor_id":"amazon", "driven_mail_vendor_token":"afdasfafa"}' http://localhost:5000/api/getAddress
+curl -X POST -H 'Content-Type: application/json' -d '{"driven_mail_username":"anmol", "driven_mail_user_password":"anmol-password", "driven_mail_vendor_id":"amazon", "driven_mail_vendor_token":"afdasfafa"}' http://localhost:5000/api/getAddress
 
-curl -X POST -H 'Content-Type: application/json' -d '{"driven_mail_username":"anmol", "driven_mail_vendor_id":"amazon","tracking_num":"randomtrackingnumber", "status":"RECORD CREATED", "status_description":"Package record created at 11:00pm"}' http://localhost:5000/api/createPackageRecord
+curl -X POST -H 'Content-Type: application/json' -d '{"driven_mail_username":"anmol", "driven_mail_address_id":"Luv1ThzGAIcvsbHKFp9n", "driven_mail_address":"222 Howard St, Washington, DC 20001", "driven_mail_vendor_id":"amazon","tracking_num":"randomtrackingnumber1", "status":"RECORD CREATED", "status_description":"Package record created at 11:00pm"}' http://localhost:5000/api/createPackageRecord
 
-curl -X POST -H 'Content-Type: application/json' -d '{"driven_mail_username":"anmol", "package_id":"kfArsEseMmcPyDXpJmk2", "status":"IN PROGRESS", "status_description":"Received at local facility"}' http://localhost:5000/api/updatePackageRecord
+curl -X POST -H 'Content-Type: application/json' -d '{"driven_mail_username":"anmol", "driven_mail_address_id":"Luv1ThzGAIcvsbHKFp9n",  "driven_mail_address":"222 Howard St, Washington, DC 20001", "package_id":"3teV8KwASnG8doZnO6R7", "status":"IN PROGRESS", "status_description":"Received at local facility"}' http://localhost:5000/api/updatePackageRecord
 
-curl -X POST -H 'Content-Type: application/json' -d '{"driven_mail_username":"anmol", "package_id":"kfArsEseMmcPyDXpJmk2", "status":"DELIVERED", "status_description":"Received at local facility"}' http://localhost:5000/api/updatePackageRecord
+curl -X POST -H 'Content-Type: application/json' -d '{"driven_mail_username":"anmol", "driven_mail_address_id":"Luv1ThzGAIcvsbHKFp9n",  "driven_mail_address":"222 Howard St, Washington, DC 20001", "package_id":"3teV8KwASnG8doZnO6R7", "status":"DELIVERED", "status_description":"Received at local facility"}' http://localhost:5000/api/updatePackageRecord
 '''
 
 from flask import jsonify, request
@@ -48,6 +48,8 @@ def views(bp):
     def viewCreatePackageRecord():
         data = request.get_json()
         username = data["driven_mail_username"]
+        address_id = data["driven_mail_address_id"]
+        address = data["driven_mail_address"]
         vendor_id = data["driven_mail_vendor_id"]
         tracking_num = data["tracking_num"]
         status = data["status"]
@@ -55,7 +57,7 @@ def views(bp):
 
         package_doc_id = createPackageRecord(tracking_num, status,
                                              status_description, vendor_id,
-                                             username)
+                                             address_id, address, username)
 
         message = {
             'status': 200,
@@ -70,13 +72,15 @@ def views(bp):
     def viewUpdatePackageRecord():
         data = request.get_json()
         username = data["driven_mail_username"]
+        address_id = data["driven_mail_address_id"]
+        address = data["driven_mail_address"]
         package_doc_id = data["package_id"]
         status = data["status"]
         status_description = data["status_description"]
 
-        package_record_updated = updatePackageStatus(username, package_doc_id,
-                                                     status,
-                                                     status_description)
+        package_record_updated = updatePackageStatus(username, address_id,
+                                                      address, package_doc_id,
+                                                       status, status_description)
 
         operation_result = "Package record failed to update"
         if package_record_updated:

@@ -289,7 +289,7 @@ def revokeVendorAccess(user_document_id, vendor_id, address_id):
 
 
 def createPackageRecord(tracking_num, status, initial_description, vendor,
-                        username):
+                        address_id, address, username):
     """ create a record for a package in firestore
 
     """
@@ -298,6 +298,8 @@ def createPackageRecord(tracking_num, status, initial_description, vendor,
         u'status-description': initial_description,
         u'tracking-number': tracking_num,
         u'vendor': vendor,
+        u'address_id': address_id,
+        u'address': address
     }
     #  get a new package document reference
     new_package_ref = db.collection(u'packages').document()
@@ -319,7 +321,7 @@ def createPackageRecord(tracking_num, status, initial_description, vendor,
     return package_doc_id
 
 
-def updatePackageStatus(username, package_doc_id, status, status_description):
+def updatePackageStatus(username, address_id, address, package_doc_id, status, status_description):
     try:
         package_ref = db.collection(u'packages').document(package_doc_id)
         user_doc_id = getDocumentIdOfUser(username)
